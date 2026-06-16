@@ -10,6 +10,7 @@ jobs:
   deploy:
     name: Sync to Hugging Face
     runs-on: ubuntu-latest
+    environment: SN
 
     steps:
       - name: 📥 Checkout repository
