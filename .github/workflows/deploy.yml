@@ -1,4 +1,4 @@
-name: 🚀 Deploy to Hugging Face Spaces
+name: Deploy to Hugging Face Spaces
 
 on:
   push:
@@ -13,23 +13,23 @@ jobs:
     environment: SN
 
     steps:
-      - name: 📥 Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           lfs: true
 
-      - name: 🐍 Setup Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-      - name: 🎨 Formatage avec black
+      - name: Formatage avec black
         run: |
           pip install black
-          black --check app.py || (black app.py && echo "Code reformaté")
+          black --check app.py || (black app.py && echo "Code reformate")
 
-      - name: 🤗 Deploy to Hugging Face Space
+      - name: Deploy to Hugging Face Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
@@ -37,14 +37,10 @@ jobs:
           python - <<'EOF'
           import os
           from huggingface_hub import HfApi
-
           api = HfApi()
           token = os.environ["HF_TOKEN"]
-          repo_id = "repo_id = "wilfrid696/Exemen-Git-IABD-LIENOU_BETCHEM""
-
-          files_to_upload = ["app.py", "requirements.txt"]
-
-          for file_path in files_to_upload:
+          repo_id = "wilfrid696/Exemen-Git-IABD-LIENOU_BETCHEM"
+          for file_path in ["app.py", "requirements.txt"]:
               if os.path.exists(file_path):
                   api.upload_file(
                       path_or_fileobj=file_path,
@@ -53,12 +49,9 @@ jobs:
                       repo_type="space",
                       token=token,
                   )
-                  print(f"✅ {file_path} uploadé")
-
-          print("🎉 Déploiement terminé !")
+                  print(f"OK: {file_path} uploade")
+          print("Deploiement termine!")
           EOF
 
-      - name: 📋 Résumé
-        run: |
-          echo "✅ Pipeline CI/CD terminé"
-          echo "📅 $(date '+%Y-%m-%d %H:%M:%S UTC')"
+      - name: Resume
+        run: echo "Pipeline CI/CD termine"
