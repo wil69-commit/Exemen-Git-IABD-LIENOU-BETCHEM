@@ -1,0 +1,63 @@
+name: 🚀 Deploy to Hugging Face Spaces
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Sync to Hugging Face
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: 🎨 Formatage avec black
+        run: |
+          pip install black
+          black --check app.py || (black app.py && echo "Code reformaté")
+
+      - name: 🤗 Deploy to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          pip install huggingface_hub
+          python - <<'EOF'
+          import os
+          from huggingface_hub import HfApi
+
+          api = HfApi()
+          token = os.environ["HF_TOKEN"]
+          repo_id = "repo_id = "wilfrid696/Exemen-Git-IABD-LIENOU_BETCHEM""
+
+          files_to_upload = ["app.py", "requirements.txt"]
+
+          for file_path in files_to_upload:
+              if os.path.exists(file_path):
+                  api.upload_file(
+                      path_or_fileobj=file_path,
+                      path_in_repo=file_path,
+                      repo_id=repo_id,
+                      repo_type="space",
+                      token=token,
+                  )
+                  print(f"✅ {file_path} uploadé")
+
+          print("🎉 Déploiement terminé !")
+          EOF
+
+      - name: 📋 Résumé
+        run: |
+          echo "✅ Pipeline CI/CD terminé"
+          echo "📅 $(date '+%Y-%m-%d %H:%M:%S UTC')"
